@@ -1,5 +1,24 @@
-<h1>Welcome</h1>
+<h1>Welcome <%= current_user.username %></h1>
 
-<p>We are currently working on your account.</p>
+<p>We are currently working on your account.
+<% if @message %>
+  <%= @message %>
+<% end %>
+</p>
 
+<h2>Current balance: <%= current_user.balance %></h2>
+
+
+
+<h2>Deposit or Withdraw</h2>
+
+
+<p>Type an amount to add or remove from your account. Use '-' to withdraw.</p>
+<form action="/account" method="POST">
+  <input type="hidden" name="_method" value="patch">
+  <input type="text" name="amount" placeholder="<%= current_user.balance %>">
+  <input type="submit" value="Go!">
+</form>
+
+<hr>
 <p><a href="/logout">Log Out</a></p>
