@@ -9,49 +9,60 @@ class ApplicationController < Sinatra::Base
   end
 
   get "/" do
-    erb :index
-  end
+   erb :index
+ end
 
-  get "/signup" do
-    erb :signup
-  end
+ get "/signup" do
+   erb :signup
+ end
 
-  post "/signup" do
-    #your code here
+ post "/signup" do
+   if params[:username].empty? || params[:password].empty?
+     redirect '/failure'
+   else
+     User.create(username: params[:username], password: params[:password])
+     redirect '/login'
+   end
 
-  end
+ end
 
-  get '/account' do
-    @user = User.find(session[:user_id])
-    erb :account
-  end
+ get '/account' do
+   @user = User.find(session[:user_id])
+   erb :account
+ end
 
 
-  get "/login" do
-    erb :login
-  end
+ get "/login" do
+   erb :login
+ end
 
-  post "/login" do
-    ##your code here
-  end
+ post "/login" do
+   @user = User.find_by(username: params[:username])
+   if @user && @user.authenticate(params[:password])
+     session[:user_id] = @user.id
+     redirect to "/account"
+   else
+     redirect to "/failure"
+   end
+ end
 
-  get "/failure" do
-    erb :failure
-  end
+ get "/failure" do
+   erb :failure
+ end
 
-  get "/logout" do
-    session.clear
-    redirect "/"
-  end
+ get "/logout" do
+   session.clear
+   redirect "/"
+ end
 
-  helpers do
-    def logged_in?
-      !!session[:user_id]
-    end
+ helpers do
+   def logged_in?
+     !!session[:user_id]
+   end
 
-    def current_user
-      User.find(session[:user_id])
-    end
-  end
+   def current_user
+     User.find(session[:user_id])
+   end
+ end
 
 end
